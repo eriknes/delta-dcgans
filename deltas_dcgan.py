@@ -89,11 +89,13 @@ generator.add(LeakyReLU(0.2))
 generator.add(Reshape((128, 12, 12)))
 generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(64, kernel_size=(4,4), padding='same'))
-generator.add(Activation('relu'))
+#generator.add(Activation('relu'))
+generator.add(LeakyReLU(0.2))
 #generator.add(Dropout(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(32, kernel_size=(8, 8), padding='same'))
-generator.add(Activation('relu'))
+#generator.add(Activation('relu'))
+generator.add(LeakyReLU(0.2))
 #generator.add(Dropout(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(1, kernel_size=(12, 12), padding='same', activation='sigmoid'))
@@ -139,6 +141,7 @@ def plotLoss(epoch):
     plt.ylabel('Loss')
     plt.legend()
     plt.savefig('images/dcgan_loss_epoch_%d.png' % epoch)
+    plt.close()
 
 # Create a wall of generated MNIST images
 def plotGeneratedImages(epoch, examples=100, dim=(10, 10), figsize=(10, 10)):
@@ -152,6 +155,7 @@ def plotGeneratedImages(epoch, examples=100, dim=(10, 10), figsize=(10, 10)):
         plt.axis('off')
     plt.tight_layout()
     plt.savefig('images/dcgan_image_epoch_%d.png' % epoch)
+    plt.close()
 
 # Save the generator and discriminator networks (and weights) for later use
 def saveModels(epoch):
