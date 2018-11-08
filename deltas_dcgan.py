@@ -82,10 +82,10 @@ adam                              = Adam(lr=0.0002, beta_1=0.5)
 
 # Generator
 generator = Sequential()
-generator.add(Dense(256*6*6, input_dim=randomDim, kernel_initializer=initializers.RandomNormal(stddev=0.02)))
+generator.add(Dense(528*6*6, input_dim=randomDim, kernel_initializer=initializers.RandomNormal(stddev=0.02)))
 generator.add(Activation('relu'))
 #generator.add(Dropout(0.2))
-generator.add(Reshape((256, 6, 6)))
+generator.add(Reshape((528, 6, 6)))
 generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(128, kernel_size=(4,4), padding='same'))
 generator.add(Activation('relu'))
