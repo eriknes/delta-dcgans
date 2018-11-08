@@ -83,20 +83,22 @@ adam                              = Adam(lr=0.0001, beta_1=0.5)
 # Generator
 generator = Sequential()
 generator.add(Dense(256*6*6, input_dim=randomDim, kernel_initializer='he_normal'))
-generator.add(Activation('relu'))
-#generator.add(LeakyReLU(0.2))
+#generator.add(Activation('relu'))
+generator.add(LeakyReLU(0.1))
 #generator.add(Dropout(0.2))
 generator.add(Reshape((256, 6, 6)))
 generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(256, kernel_size=(6,6), padding='same', kernel_initializer='he_normal'))
-generator.add(Activation('relu'))
+#generator.add(Activation('relu'))
+generator.add(LeakyReLU(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(128, kernel_size=(6,6), padding='same', kernel_initializer='he_normal'))
-generator.add(Activation('relu'))
+#generator.add(Activation('relu'))
+generator.add(LeakyReLU(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(64, kernel_size=(6, 6), padding='same', kernel_initializer='he_normal'))
-generator.add(Activation('relu'))
-#generator.add(LeakyReLU(0.2))
+#generator.add(Activation('relu'))
+generator.add(LeakyReLU(0.1))
 #generator.add(Dropout(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(1, kernel_size=(6, 6), padding='same', activation='sigmoid'))
@@ -185,7 +187,7 @@ def train(epochs=1, batchSize=128):
             X = np.concatenate([imageBatch, generatedImages])
 
             # Labels for generated and real data
-            yDis = np.zeros(2*batchSize)
+            yDis = .01*np.ones(2*batchSize)
             # One-sided label smoothing
             yDis[:batchSize] = 0.95
 
@@ -215,4 +217,4 @@ def train(epochs=1, batchSize=128):
  
 
 if __name__ == '__main__':
-    train(40, 128)
+    train(40, 64)
