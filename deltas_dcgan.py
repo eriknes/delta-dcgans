@@ -67,7 +67,7 @@ K.set_image_dim_ordering('th')
 np.random.seed(1)
 
 # Random vector dimension
-randomDim                         = 30
+randomDim                         = 20
 
 # Create dataset
 fname                             = "data/train/braidedData2.csv"
@@ -82,26 +82,26 @@ adam                              = Adam(lr=0.0001, beta_1=0.5)
 
 # Generator
 generator = Sequential()
-generator.add(Dense(128*12*12, input_dim=randomDim, kernel_initializer='he_normal'))
+generator.add(Dense(256*12*12, input_dim=randomDim))
 generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.1))
 #generator.add(Dropout(0.2))
-generator.add(Reshape((128, 12, 12)))
+generator.add(Reshape((256, 12, 12)))
 #generator.add(UpSampling2D(size=(2, 2)))
 #generator.add(Conv2D(128, kernel_size=(6,6), padding='same', kernel_initializer='he_normal'))
 #generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(128, kernel_size=(10,10), padding='same', kernel_initializer='he_normal'))
+generator.add(Conv2D(128, kernel_size=(6,6), padding='same'))
 generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(128, kernel_size=(6, 6), padding='same', kernel_initializer='he_normal'))
+generator.add(Conv2D(128, kernel_size=(5, 5), padding='same'))
 generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.1))
 #generator.add(Dropout(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(1, kernel_size=(4, 4), padding='same', activation='sigmoid', kernel_initializer='he_normal'))
+generator.add(Conv2D(1, kernel_size=(4, 4), padding='same', activation='sigmoid'))
 generator.summary()
 generator.compile(loss='binary_crossentropy', optimizer=adam)
 
@@ -219,4 +219,4 @@ def train(epochs=1, batchSize=128):
  
 
 if __name__ == '__main__':
-    train(40, 64)
+    train(40, 128)
