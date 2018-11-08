@@ -92,22 +92,22 @@ generator.add(Reshape((256, 12, 12)))
 #generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(256, kernel_size=(8,8), padding='same'))
+generator.add(Conv2D(128, kernel_size=(6,6), padding='same'))
 generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(128, kernel_size=(6, 6), padding='same'))
+generator.add(Conv2D(64, kernel_size=(8, 8), padding='same'))
 generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.1))
 #generator.add(Dropout(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(1, kernel_size=(6, 6), padding='same', activation='sigmoid'))
+generator.add(Conv2D(1, kernel_size=(10, 10), padding='same', activation='sigmoid'))
 generator.summary()
 generator.compile(loss='binary_crossentropy', optimizer=adam)
 
 # Discriminator
 discriminator = Sequential()
-discriminator.add(Conv2D(64, kernel_size=(12, 12), strides=(2, 2), padding='same', 
+discriminator.add(Conv2D(32, kernel_size=(12, 12), strides=(2, 2), padding='same', 
   input_shape=(1, nx, ny), kernel_initializer=initializers.RandomNormal(stddev=0.02)))
 #discriminator.add(BatchNormalization(momentum=0.75))
 discriminator.add(LeakyReLU(0.2))
@@ -117,11 +117,11 @@ discriminator.add(Dropout(0.3))
 #discriminator.add(BatchNormalization(momentum=0.75))
 #discriminator.add(LeakyReLU(0.2))
 #discriminator.add(Dropout(0.3))
-discriminator.add(Conv2D(128, kernel_size=(8, 8), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
+discriminator.add(Conv2D(64, kernel_size=(8, 8), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
 #discriminator.add(BatchNormalization(momentum=0.9))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.3))
-discriminator.add(Conv2D(256, kernel_size=(4, 4), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
+discriminator.add(Conv2D(128, kernel_size=(4, 4), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
 #discriminator.add(BatchNormalization(momentum=0.9))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.3))
@@ -189,9 +189,9 @@ def train(epochs=1, batchSize=128):
             X = np.concatenate([imageBatch, generatedImages])
 
             # Labels for generated and real data
-            yDis = .01*np.ones(2*batchSize)
+            yDis = 0.0*np.ones(2*batchSize)
             # One-sided label smoothing
-            yDis[:batchSize] = 0.95
+            yDis[:batchSize] = 0.9
 
             # Train discriminator
             discriminator.trainable = True
