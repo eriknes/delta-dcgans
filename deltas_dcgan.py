@@ -82,12 +82,12 @@ adam                              = Adam(lr=0.0002, beta_1=0.5)
 
 # Generator
 generator = Sequential()
-generator.add(Dense(528*6*6, input_dim=randomDim, kernel_initializer=initializers.RandomNormal(stddev=0.02)))
+generator.add(Dense(512*6*6, input_dim=randomDim, kernel_initializer=initializers.RandomNormal(stddev=0.02)))
 generator.add(Activation('relu'))
 #generator.add(Dropout(0.2))
-generator.add(Reshape((528, 6, 6)))
+generator.add(Reshape((512, 6, 6)))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(128, kernel_size=(4,4), padding='same'))
+generator.add(Conv2D(256, kernel_size=(4,4), padding='same'))
 generator.add(Activation('relu'))
 generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(128, kernel_size=(5,5), padding='same'))
@@ -99,6 +99,7 @@ generator.add(Activation('relu'))
 #generator.add(Dropout(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(1, kernel_size=(6, 6), padding='same', activation='sigmoid'))
+generator.summary()
 generator.compile(loss='binary_crossentropy', optimizer=adam)
 
 # Discriminator
@@ -117,6 +118,7 @@ discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.3))
 discriminator.add(Flatten())
 discriminator.add(Dense(1, activation='sigmoid'))
+discriminator.summary()
 discriminator.compile(loss='binary_crossentropy', optimizer=adam)
 
 # Combined network
