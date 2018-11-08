@@ -169,7 +169,7 @@ def train(epochs=1, batchSize=128):
     print ('Batches per epoch:', batchCount)
 
     for e in range(1, epochs+1):
-        print '-'*15, 'Epoch %d' % e, '-'*15
+        print ('-'*15, 'Epoch %d' % e, '-'*15)
         for _ in range(batchCount):
             # Get a random set of input noise and images
             noise = np.random.normal(0, 1, size=[batchSize, randomDim])
