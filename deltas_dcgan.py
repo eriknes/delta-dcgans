@@ -67,7 +67,7 @@ K.set_image_dim_ordering('th')
 np.random.seed(1)
 
 # Random vector dimension
-randomDim                         = 20
+randomDim                         = 30
 
 # Create dataset
 fname                             = "data/train/braidedData2.csv"
@@ -107,11 +107,11 @@ generator.compile(loss='binary_crossentropy', optimizer=adam)
 
 # Discriminator
 discriminator = Sequential()
-discriminator.add(Conv2D(32, kernel_size=(8, 8), strides=(2, 2), padding='same', 
-  input_shape=(1, nx, ny), kernel_initializer='he_normal'))
+#discriminator.add(Conv2D(32, kernel_size=(8, 8), strides=(2, 2), padding='same', 
+#  input_shape=(1, nx, ny), kernel_initializer='he_normal'))
 #discriminator.add(BatchNormalization(momentum=0.75))
-discriminator.add(LeakyReLU(0.2))
-discriminator.add(Dropout(0.3))
+#discriminator.add(LeakyReLU(0.2))
+#discriminator.add(Dropout(0.3))
 discriminator.add(Conv2D(64, kernel_size=(5, 5), strides=(2, 2), padding='same'),
   kernel_initializer='he_normal')
 #discriminator.add(BatchNormalization(momentum=0.75))
