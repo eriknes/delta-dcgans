@@ -67,7 +67,7 @@ K.set_image_dim_ordering('th')
 np.random.seed(1)
 
 # Random vector dimension
-randomDim                         = 50
+randomDim                         = 20
 
 # Create dataset
 fname                             = "data/train/braidedData2.csv"
@@ -82,35 +82,35 @@ adam                              = Adam(lr=0.0001, beta_1=0.5)
 
 # Generator
 generator = Sequential()
-generator.add(Dense(528*6*6, input_dim=randomDim, kernel_initializer='he_normal'))
+generator.add(Dense(256*6*6, input_dim=randomDim, kernel_initializer='he_normal'))
 generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.2))
 #generator.add(Dropout(0.2))
-generator.add(Reshape((528, 6, 6)))
+generator.add(Reshape((256, 6, 6)))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(256, kernel_size=(5,5), padding='same', kernel_initializer='he_normal'))
+generator.add(Conv2D(256, kernel_size=(6,6), padding='same', kernel_initializer='he_normal'))
 generator.add(Activation('relu'))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(128, kernel_size=(5,5), padding='same', kernel_initializer='he_normal'))
+generator.add(Conv2D(128, kernel_size=(6,6), padding='same', kernel_initializer='he_normal'))
 generator.add(Activation('relu'))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(64, kernel_size=(5, 5), padding='same', kernel_initializer='he_normal'))
+generator.add(Conv2D(64, kernel_size=(6, 6), padding='same', kernel_initializer='he_normal'))
 generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.2))
 #generator.add(Dropout(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(1, kernel_size=(5, 5), padding='same', activation='sigmoid'))
+generator.add(Conv2D(1, kernel_size=(6, 6), padding='same', activation='sigmoid'))
 generator.summary()
 generator.compile(loss='binary_crossentropy', optimizer=adam)
 
 # Discriminator
 discriminator = Sequential()
-discriminator.add(Conv2D(32, kernel_size=(5, 5), strides=(2, 2), padding='same', input_shape=(1, nx, ny)))
-discriminator.add(BatchNormalization(momentum=0.75))
+discriminator.add(Conv2D(32, kernel_size=(8, 8), strides=(2, 2), padding='same', input_shape=(1, nx, ny)))
+#discriminator.add(BatchNormalization(momentum=0.75))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.3))
 discriminator.add(Conv2D(64, kernel_size=(5, 5), strides=(2, 2), padding='same'))
-discriminator.add(BatchNormalization(momentum=0.75))
+#discriminator.add(BatchNormalization(momentum=0.75))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.3))
 discriminator.add(Conv2D(128, kernel_size=(5, 5), strides=(2, 2), padding='same'))
