@@ -106,19 +106,19 @@ generator.compile(loss='binary_crossentropy', optimizer=adam)
 # Discriminator
 discriminator = Sequential()
 discriminator.add(Conv2D(32, kernel_size=(5, 5), strides=(2, 2), padding='same', input_shape=(1, nx, ny)))
-discriminator.add(BatchNormalization(momentum=0.9))
+#discriminator.add(BatchNormalization(momentum=0.9))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.3))
 discriminator.add(Conv2D(64, kernel_size=(5, 5), strides=(2, 2), padding='same'))
-discriminator.add(BatchNormalization(momentum=0.9))
+#discriminator.add(BatchNormalization(momentum=0.9))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.3))
 discriminator.add(Conv2D(128, kernel_size=(5, 5), strides=(2, 2), padding='same'))
-discriminator.add(BatchNormalization(momentum=0.9))
+#discriminator.add(BatchNormalization(momentum=0.9))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.3))
 discriminator.add(Conv2D(256, kernel_size=(5, 5), strides=(2, 2), padding='same'))
-discriminator.add(BatchNormalization(momentum=0.9))
+#discriminator.add(BatchNormalization(momentum=0.9))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.3))
 discriminator.add(Flatten())
@@ -187,7 +187,7 @@ def train(epochs=1, batchSize=128):
             # Labels for generated and real data
             yDis = np.zeros(2*batchSize)
             # One-sided label smoothing
-            yDis[:batchSize] = 0.92
+            yDis[:batchSize] = 0.95
 
             # Train discriminator
             discriminator.trainable = True
@@ -205,12 +205,12 @@ def train(epochs=1, batchSize=128):
         print('Generator Loss: '+str(gloss) + ', Discriminator Loss: ' + str(dloss))
 
 
-
-        if e == 1 or e % 5 == 0:
-            plotGeneratedImages(e)
-            # Plot losses from every epoch
-            plotLoss(e)
-            saveModels(e)
+        #if e == 1 or e % 5 == 0:
+        plotGeneratedImages(e)
+        # Plot losses from every epoch
+        plotLoss(e)
+        saveModels(e)
+            
             
  
 
