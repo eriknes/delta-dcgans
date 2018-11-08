@@ -101,7 +101,7 @@ generator.add(Conv2D(64, kernel_size=(6, 6), padding='same', kernel_initializer=
 generator.add(LeakyReLU(0.1))
 #generator.add(Dropout(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(1, kernel_size=(6, 6), padding='same', activation='sigmoid'), kernel_initializer='he_normal')
+generator.add(Conv2D(1, kernel_size=(6, 6), padding='same', activation='sigmoid', kernel_initializer='he_normal'))
 generator.summary()
 generator.compile(loss='binary_crossentropy', optimizer=adam)
 
