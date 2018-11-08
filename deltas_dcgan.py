@@ -82,26 +82,28 @@ adam                              = Adam(lr=0.0002, beta_1=0.5)
 
 # Generator
 generator = Sequential()
-generator.add(Dense(128*12*12, input_dim=randomDim, 
+generator.add(Dense(256*6*6, input_dim=randomDim, 
   kernel_initializer=initializers.RandomNormal(stddev=0.02)))
 generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.2))
 #generator.add(Dropout(0.2))
-generator.add(Reshape((128, 12, 12)))
+generator.add(Reshape((256, 6, 6)))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(64, kernel_size=(6,6), padding='same',
+generator.add(Conv2D(128, kernel_size=(5,5), padding='same',
+  kernel_initializer=initializers.RandomNormal(stddev=0.02)))
+generator.add(Activation('relu'))
+generator.add(UpSampling2D(size=(2, 2)))
+generator.add(Conv2D(64, kernel_size=(5,5), padding='same',
+  kernel_initializer=initializers.RandomNormal(stddev=0.02)))
+generator.add(Activation('relu'))
+generator.add(UpSampling2D(size=(2, 2)))
+generator.add(Conv2D(32, kernel_size=(5, 5), padding='same',
   kernel_initializer=initializers.RandomNormal(stddev=0.02)))
 generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.2))
 #generator.add(Dropout(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(32, kernel_size=(6, 6), padding='same',
-  kernel_initializer=initializers.RandomNormal(stddev=0.02)))
-generator.add(Activation('relu'))
-#generator.add(LeakyReLU(0.2))
-#generator.add(Dropout(0.1))
-generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(1, kernel_size=(6, 6), padding='same', activation='sigmoid'))
+generator.add(Conv2D(1, kernel_size=(5, 5), padding='same', activation='sigmoid'))
 generator.summary()
 generator.compile(loss='binary_crossentropy', optimizer=adam)
 
