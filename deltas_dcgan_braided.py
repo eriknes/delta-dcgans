@@ -19,7 +19,6 @@ from keras.optimizers import Adam
 from keras import backend as K
 from keras import initializers
 
-# Read csv file
 def load_file(fname):
   X = pd.read_csv(fname)
   X = X.values
@@ -27,8 +26,7 @@ def load_file(fname):
   return X
   
 
-# Split into train and test data for GAN 
-def build_dataset(X, nx, ny, n_test = 0):
+def create_dataset(X, nx, ny, n_test = 0):
   
   m = X.shape[0]
   print("Number of braided samples: " + str(m) )
@@ -41,7 +39,7 @@ def build_dataset(X, nx, ny, n_test = 0):
   X = X[:,p]
   Y = Y[p]
   
-  # Reshape X and crop to 96x96 pixels
+  # Reshape X
   X_new = np.zeros((m,nx,ny))
   for i in range(m):
     Xtemp = np.reshape(X[:,i],(101,101))
@@ -59,88 +57,82 @@ def build_dataset(X, nx, ny, n_test = 0):
   
   return X_train, Y_train, X_test, Y_test
 
-
-
 K.set_image_dim_ordering('th')
 
 # Deterministic output.
+# Tired of seeing the same results every time? Remove the line below.
 np.random.seed(1)
 
-# Random vector dimension
-randomDim                         = 20
+# The results are a little better when the dimensionality of the random vector is only 10.
+# The dimensionality has been left at 100 for consistency with other GAN implementations.
 
-# Create dataset
-fname                             = "data/train/braidedData2.csv"
-X_train                           = load_file(fname)
-nx                                = 96
-ny                                = 96
-X_train, y_train, X_test, y_test  = build_dataset(X_train, nx, ny)
-X_train                           = X_train[:, np.newaxis, :, :]
+randomDim   = 10
+
+fname       = "data/train/braidedData2.csv"
+X_train     = load_file(fname)
+
+nx          = 96
+ny          = 96
+
+X_train, y_train, X_test, y_test = create_dataset(X_train, nx, ny)
+X_train = X_train[:, np.newaxis, :, :]
+
+# Load MNIST data
+#(X_train, y_train), (X_test, y_test) = mnist.load_data()
+#X_train = (X_train.astype(np.float32) - 127.5)/127.5
+#X_train = X_train[:, np.newaxis, :, :]
 
 # Optimizer
-adam                              = Adam(lr=0.0001, beta_1=0.5)
+adam = Adam(lr=0.0002, beta_1=0.5)
 
 # Generator
 generator = Sequential()
-generator.add(Dense(256*6*6, input_dim=randomDim, kernel_initializer=initializers.RandomNormal(stddev=0.02)))
+generator.add(Dense(256*12*12, input_dim=randomDim, kernel_initializer=initializers.RandomNormal(stddev=0.02)))
 generator.add(Activation('relu'))
-#generator.add(LeakyReLU(0.2))
-
-generator.add(Reshape((256, 6, 6)))
+#generator.add(Dropout(0.1))
+generator.add(Reshape((256, 12, 12)))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(128, kernel_size=(5,5), padding='same', kernel_initializer=initializers.RandomNormal(stddev=0.02)))
+generator.add(Conv2D(128, kernel_size=(6,6), padding='same'))
 generator.add(Activation('relu'))
-generator.add(Dropout(0.2))
-#generator.add(LeakyReLU(0.1))
-generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(128, kernel_size=(5,5), padding='same'))
-generator.add(Activation('relu'))
-#generator.add(LeakyReLU(0.1))
-generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(64, kernel_size=(5, 5), padding='same'))
-generator.add(Activation('relu'))
-#generator.add(LeakyReLU(0.1))
 #generator.add(Dropout(0.1))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(1, kernel_size=(5, 5), padding='same', activation='sigmoid'))
+generator.add(Conv2D(64, kernel_size=(9, 9), padding='same'))
+generator.add(Activation('relu'))
+#generator.add(Dropout(0.1))
+generator.add(UpSampling2D(size=(2, 2)))
+generator.add(Conv2D(1, kernel_size=(12, 12), padding='same', activation='sigmoid'))
 generator.summary()
 generator.compile(loss='binary_crossentropy', optimizer=adam)
 
 # Discriminator
 discriminator = Sequential()
-discriminator.add(Conv2D(128, kernel_size=(8, 8), strides=(2, 2), padding='same', 
-  input_shape=(1, nx, ny), kernel_initializer=initializers.RandomNormal(stddev=0.02)))
-#discriminator.add(BatchNormalization(momentum=0.7))
+discriminator.add(Conv2D(64, kernel_size=(16, 16), strides=(2, 2), padding='same', input_shape=(1, nx, ny), kernel_initializer=initializers.RandomNormal(stddev=0.02)))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.4))
-#discriminator.add(Conv2D(64, kernel_size=(5, 5), strides=(2, 2), padding='same'),
-#  kernel_initializer='he_normal')
-#discriminator.add(BatchNormalization(momentum=0.7))
-#discriminator.add(LeakyReLU(0.2))
-#discriminator.add(Dropout(0.3))
-discriminator.add(Conv2D(128, kernel_size=(6, 6), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
-#discriminator.add(BatchNormalization(momentum=0.7))
+discriminator.add(Conv2D(128, kernel_size=(8, 8), strides=(2, 2), padding='same'))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.4))
-discriminator.add(Conv2D(256, kernel_size=(4, 4), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
-#discriminator.add(BatchNormalization(momentum=0.7))
+discriminator.add(Conv2D(256, kernel_size=(4, 4), strides=(2, 2), padding='same'))
+discriminator.add(LeakyReLU(0.2))
+discriminator.add(Dropout(0.4))
+discriminator.add(Conv2D(512, kernel_size=(4, 4), strides=(2, 2), padding='same'))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.4))
 discriminator.add(Flatten())
-discriminator.add(Dense(1, activation='sigmoid', kernel_initializer='he_normal'))
+discriminator.add(Dense(1, activation='sigmoid'))
 discriminator.summary()
 discriminator.compile(loss='binary_crossentropy', optimizer=adam)
 
 # Combined network
-discriminator.trainable   = False
-ganInput                  = Input(shape=(randomDim,))
-x                         = generator(ganInput)
-ganOutput                 = discriminator(x)
-gan                       = Model(inputs=ganInput, outputs=ganOutput)
+discriminator.trainable = False
+ganInput = Input(shape=(randomDim,))
+x = generator(ganInput)
+ganOutput = discriminator(x)
+gan = Model(inputs=ganInput, outputs=ganOutput)
 gan.compile(loss='binary_crossentropy', optimizer=adam)
 
-dLosses                   = []
-gLosses                   = []
+dLosses = []
+gLosses = []
 
 # Plot the loss from each batch
 def plotLoss(epoch):
@@ -151,7 +143,6 @@ def plotLoss(epoch):
     plt.ylabel('Loss')
     plt.legend()
     plt.savefig('images/dcgan_loss_epoch_%d.png' % epoch)
-    plt.close()
 
 # Create a wall of generated MNIST images
 def plotGeneratedImages(epoch, examples=100, dim=(10, 10), figsize=(10, 10)):
@@ -164,8 +155,7 @@ def plotGeneratedImages(epoch, examples=100, dim=(10, 10), figsize=(10, 10)):
         plt.imshow(generatedImages[i, 0], interpolation='nearest', cmap='gray_r')
         plt.axis('off')
     plt.tight_layout()
-    plt.savefig('images/dcgan_image_epoch_%d.png' % epoch)
-    plt.close()
+    plt.savefig('images/dcgan_generated_image_epoch_%d.png' % epoch)
 
 # Save the generator and discriminator networks (and weights) for later use
 def saveModels(epoch):
@@ -179,7 +169,7 @@ def train(epochs=1, batchSize=128):
     print ('Batches per epoch:', batchCount)
 
     for e in range(1, epochs+1):
-        print ('-'*15, 'Epoch %d' % e, '-'*15)
+        print '-'*15, 'Epoch %d' % e, '-'*15
         for _ in range(batchCount):
             # Get a random set of input noise and images
             noise = np.random.normal(0, 1, size=[batchSize, randomDim])
@@ -190,7 +180,7 @@ def train(epochs=1, batchSize=128):
             X = np.concatenate([imageBatch, generatedImages])
 
             # Labels for generated and real data
-            yDis = 0.0*np.ones(2*batchSize)
+            yDis = np.zeros(2*batchSize)
             # One-sided label smoothing
             yDis[:batchSize] = 0.9
 
@@ -210,12 +200,12 @@ def train(epochs=1, batchSize=128):
         print('Generator Loss: '+str(gloss) + ', Discriminator Loss: ' + str(dloss))
 
 
-        #if e == 1 or e % 5 == 0:
-        plotGeneratedImages(e)
-        # Plot losses from every epoch
-        plotLoss(e)
-        saveModels(e)
-            
+
+        if e == 1 or e % 5 == 0:
+            plotGeneratedImages(e)
+            # Plot losses from every epoch
+            plotLoss(e)
+            saveModels(e)
             
  
 
