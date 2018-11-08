@@ -28,7 +28,7 @@ def load_file(fname):
   
 
 # Split into train and test data for GAN 
-def build_dataset(X, nx, ny, n_test = 500):
+def build_dataset(X, nx, ny, n_test = 0):
   
   m = X.shape[0]
   print("Number of braided samples: " + str(m) )
@@ -70,7 +70,7 @@ np.random.seed(1)
 randomDim                         = 20
 
 # Create dataset
-fname                             = "data/braidedData2.csv"
+fname                             = "data/train/braidedData2.csv"
 X_train                           = load_file(fname)
 nx                                = 96
 ny                                = 96
@@ -84,7 +84,7 @@ adam                              = Adam(lr=0.0002, beta_1=0.5)
 generator = Sequential()
 generator.add(Dense(256*12*12, input_dim=randomDim, kernel_initializer=initializers.RandomNormal(stddev=0.02)))
 generator.add(Activation('relu'))
-generator.add(Dropout(0.2))
+#generator.add(Dropout(0.2))
 generator.add(Reshape((256, 12, 12)))
 generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(128, kernel_size=(5,5), padding='same'))
