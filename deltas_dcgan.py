@@ -67,7 +67,7 @@ K.set_image_dim_ordering('th')
 np.random.seed(1)
 
 # Random vector dimension
-randomDim                         = 20
+randomDim                         = 50
 
 # Create dataset
 fname                             = "data/train/braidedData2.csv"
@@ -78,7 +78,7 @@ X_train, y_train, X_test, y_test  = build_dataset(X_train, nx, ny)
 X_train                           = X_train[:, np.newaxis, :, :]
 
 # Optimizer
-adam                              = Adam(lr=0.0001, beta_1=0.5)
+adam                              = Adam(lr=0.0002, beta_1=0.5)
 
 # Generator
 generator = Sequential()
@@ -108,7 +108,7 @@ generator.compile(loss='binary_crossentropy', optimizer=adam)
 
 # Discriminator
 discriminator = Sequential()
-discriminator.add(Conv2D(128, kernel_size=(8, 8), strides=(2, 2), padding='same', 
+discriminator.add(Conv2D(128, kernel_size=(6, 6), strides=(2, 2), padding='same', 
   input_shape=(1, nx, ny), kernel_initializer=initializers.RandomNormal(stddev=0.02)))
 #discriminator.add(BatchNormalization(momentum=0.7))
 discriminator.add(LeakyReLU(0.2))
@@ -118,11 +118,11 @@ discriminator.add(Dropout(0.4))
 #discriminator.add(BatchNormalization(momentum=0.7))
 #discriminator.add(LeakyReLU(0.2))
 #discriminator.add(Dropout(0.3))
-discriminator.add(Conv2D(128, kernel_size=(6, 6), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
+discriminator.add(Conv2D(256, kernel_size=(6, 6), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
 #discriminator.add(BatchNormalization(momentum=0.7))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.4))
-discriminator.add(Conv2D(256, kernel_size=(4, 4), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
+discriminator.add(Conv2D(512, kernel_size=(4, 4), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
 #discriminator.add(BatchNormalization(momentum=0.7))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.4))
