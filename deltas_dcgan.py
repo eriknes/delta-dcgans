@@ -83,7 +83,6 @@ adam                              = Adam(lr=0.0002, beta_1=0.5)
 # Generator
 generator = Sequential()
 generator.add(Dense(512*12*12, input_dim=randomDim, kernel_initializer=initializers.RandomNormal(stddev=0.02)))
-generator.add(BatchNormalization(axis=1))
 generator.add(Activation('relu'))
 #generator.add(LeakyReLU(0.2))
 
