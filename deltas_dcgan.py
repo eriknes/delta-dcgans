@@ -88,7 +88,7 @@ generator.add(Activation('relu'))
 
 generator.add(Reshape((512, 12, 12)))
 generator.add(UpSampling2D(size=(2, 2)))
-generator.add(Conv2D(512, kernel_size=(5,5), padding='same', kernel_initializer=initializers.RandomNormal(stddev=0.01)))
+generator.add(Conv2D(256, kernel_size=(5,5), padding='same', kernel_initializer=initializers.RandomNormal(stddev=0.01)))
 generator.add(BatchNormalization())
 generator.add(Activation('relu'))
 #generator.add(Dropout(0.1))
@@ -114,7 +114,7 @@ generator.compile(loss='binary_crossentropy', optimizer=adam)
 
 # Discriminator
 discriminator = Sequential()
-discriminator.add(Conv2D(128, kernel_size=(4, 4), strides=(2, 2), padding='same', 
+discriminator.add(Conv2D(128, kernel_size=(5, 5), strides=(2, 2), padding='same', 
   input_shape=(1, nx, ny), kernel_initializer=initializers.RandomNormal(stddev=0.02)))
 #discriminator.add(BatchNormalization(momentum=0.7))
 discriminator.add(LeakyReLU(0.2))
@@ -128,7 +128,7 @@ discriminator.add(Conv2D(256, kernel_size=(4, 4), strides=(2, 2), padding='same'
 #discriminator.add(BatchNormalization(momentum=0.7))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.4))
-discriminator.add(Conv2D(512, kernel_size=(4, 4), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
+discriminator.add(Conv2D(512, kernel_size=(3, 3), strides=(2, 2), padding='same',kernel_initializer='he_normal'))
 #discriminator.add(BatchNormalization(momentum=0.7))
 discriminator.add(LeakyReLU(0.2))
 discriminator.add(Dropout(0.4))
